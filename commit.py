@@ -15,7 +15,7 @@ def crear_archivo_js(proyecto_dir):
     ruta_archivo_js = os.path.join(proyecto_dir, nombre_archivo_js)
     with open(ruta_archivo_js, "w") as archivo_js:
         archivo_js.write(contenido_js)
-    return f"Archivo JS creado en: {ruta_archivo_js}"
+    return f"Archivo JS creado en: la ruta especificada"
 
 def reconocer_voz(proyecto_dir, engine):
     recognizer = sr.Recognizer()
