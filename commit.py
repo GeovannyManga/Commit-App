@@ -20,7 +20,7 @@ def crear_archivo_js(proyecto_dir):
 def reconocer_voz(proyecto_dir, engine):
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        recognizer.adjust_for_ambient_noise(source)  # Ajustar para ruido ambiente
+        recognizer.adjust_for_ambient_noise(source)
     
         print("La aplicación está escuchando. Presiona Ctrl+C para detenerla.")
         engine.say("La aplicación está escuchando. Presiona Ctrl+C para detenerla.")
@@ -53,7 +53,7 @@ def reconocer_voz(proyecto_dir, engine):
                     engine.say("Commit y push realizados exitosamente")
                     engine.runAndWait()
                 else:
-                    continue  # Si no es "hazme un commit", vuelve al inicio del bucle
+                    continue
 
             except sr.UnknownValueError:
                 print("No se pudo entender lo que dijiste")
@@ -74,7 +74,6 @@ def reconocer_voz(proyecto_dir, engine):
                 engine.runAndWait()
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    # Si el script está empaquetado como ejecutable, usa pythonw.exe
     pythonw_path = os.path.join(sys._MEIPASS, 'pythonw.exe')
     subprocess.Popen([pythonw_path, __file__])
 else:
