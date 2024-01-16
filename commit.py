@@ -35,6 +35,12 @@ def reconocer_voz(proyecto_dir, engine):
                 print(f'Dijiste: "{texto}"')
                 engine.say(f'Dijiste: "{texto}"')
                 engine.runAndWait()
+                
+                if "cerrar" in texto.lower():
+                    print("cerrando programa")
+                    engine.say("cerrando programa")
+                    engine.runAndWait()
+                    sys.exit()
 
                 if "hazme un commit" in texto.lower():
                     print("¡Realizando commit y push en el proyecto!")
@@ -86,3 +92,4 @@ else:
         print("Programa detenido por el usuario.")
         engine.say("Programa detenido por el usuario.")
         engine.runAndWait()
+        
