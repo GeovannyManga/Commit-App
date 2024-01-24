@@ -1,9 +1,22 @@
 import os
-import sys
-import speech_recognition as sr
 import subprocess
 import datetime
-import pyttsx3
+import random
+import time
+
+def contar_archivos_js(proyecto_dir):
+    archivos_js = [archivo for archivo in os.listdir(proyecto_dir) if archivo.endswith(".js")]
+    return len(archivos_js)
+
+def eliminar_archivos_js(proyecto_dir, limite):
+    archivos_js = [archivo for archivo in os.listdir(proyecto_dir) if archivo.endswith(".js")]
+    
+    if len(archivos_js) > limite:
+        print(f"Eliminando archivos .js (total: {len(archivos_js)})...")
+        for archivo in archivos_js:
+            ruta_archivo = os.path.join(proyecto_dir, archivo)
+            os.remove(ruta_archivo)
+        print("Archivos .js eliminados.")
 
 def crear_archivo_js(proyecto_dir):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -15,81 +28,46 @@ def crear_archivo_js(proyecto_dir):
     ruta_archivo_js = os.path.join(proyecto_dir, nombre_archivo_js)
     with open(ruta_archivo_js, "w") as archivo_js:
         archivo_js.write(contenido_js)
-    return f"Archivo JS creado en: la ruta especificada"
+    return f"Archivo JS creado en: {ruta_archivo_js}"
 
-def reconocer_voz(proyecto_dir, engine):
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        recognizer.adjust_for_ambient_noise(source)
+def realizar_commit_push(proyecto_dir, num_commits):
+    os.chdir(proyecto_dir)
     
-        print("La aplicación está escuchando. Presiona Ctrl+C para detenerla.")
-        engine.say("La aplicación está escuchando. Presiona Ctrl+C para detenerla.")
-        engine.runAndWait()
+    for _ in range(num_commits):
+        subprocess.run(['git', 'commit', '--allow-empty', '-m', '"Nuevo commit"'])
+        time.sleep(1)
+    
+    subprocess.run(['git', 'push'])
 
-        while True:
-            print("Esperando comando...")
-            audio = recognizer.listen(source)
+proyecto_dir = r"C:\Users\Geodev\Documents\pythonProyects\prueba1"
+limite_archivos_js = 20
 
-            try:
-                texto = recognizer.recognize_google(audio, language='es-ES')
-                print(f'Dijiste: "{texto}"')
-                engine.say(f'Dijiste: "{texto}"')
-                engine.runAndWait()
-                
-                if "cerrar" in texto.lower():
-                    print("cerrando programa")
-                    engine.say("cerrando programa")
-                    engine.runAndWait()
-                    sys.exit()
-
-                if "hazme un commit" in texto.lower():
-                    print("¡Realizando commit y push en el proyecto!")
-                    engine.say("Realizando commit y push en el proyecto")
-                    engine.runAndWait()
-                    mensaje = crear_archivo_js(proyecto_dir)
-                    engine.say(mensaje)
-                    engine.runAndWait()
-
-                    os.chdir(proyecto_dir)
-                    subprocess.run(['git', 'add', '.'])
-                    subprocess.run(['git', 'commit', '-m', '"Nuevo commit"'])
-                    subprocess.run(['git', 'push'])
-
-                    print("Commit y push realizados exitosamente.")
-                    engine.say("Commit y push realizados exitosamente")
-                    engine.runAndWait()
-                else:
-                    continue
-
-            except sr.UnknownValueError:
-                print("No se pudo entender lo que dijiste")
-                engine.say("No se pudo entender lo que dijiste")
-                engine.runAndWait()
-            except sr.RequestError as e:
-                print(f"Error en la solicitud al servicio de reconocimiento de voz: {e}")
-                engine.say(f"Error en la solicitud al servicio de reconocimiento de voz: {e}")
-                engine.runAndWait()
-            except KeyboardInterrupt:
-                print("Programa detenido por el usuario.")
-                engine.say("Programa detenido por el usuario.")
-                engine.runAndWait()
-                break
-            except Exception as e:
-                print(f"Otro error: {e}")
-                engine.say(f"Otro error: {e}")
-                engine.runAndWait()
-
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    pythonw_path = os.path.join(sys._MEIPASS, 'pythonw.exe')
-    subprocess.Popen([pythonw_path, __file__])
-else:
-    proyecto_dir = r"C:\Users\Geodev\Documents\pythonProyects\prueba1"
-    engine = pyttsx3.init()
-
+while True:
     try:
-        reconocer_voz(proyecto_dir, engine)
+        now = datetime.datetime.now()
+
+        # Verificar si es las 10:00 AM
+        if now.hour == 10 and now.minute == 10:
+            # Eliminar archivos .js si superan el límite
+            eliminar_archivos_js(proyecto_dir, limite_archivos_js)
+
+            # Generar un número aleatorio de commits entre 10 y 25
+            num_commits = random.randint(10, 25)
+
+            print(f"Realizando {num_commits} commits y push en el proyecto - {now}")
+
+            mensaje = crear_archivo_js(proyecto_dir)
+            print(mensaje)
+
+            realizar_commit_push(proyecto_dir, num_commits)
+
+            print("Commits y push realizados exitosamente.")
+        
+        # Esperar un minuto antes de verificar nuevamente
+        time.sleep(60)
+
     except KeyboardInterrupt:
         print("Programa detenido por el usuario.")
-        engine.say("Programa detenido por el usuario.")
-        engine.runAndWait()
-        
+        break
+    except Exception as e:
+        print(f"Error: {e}")
