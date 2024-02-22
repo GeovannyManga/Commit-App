@@ -47,7 +47,7 @@ while True:
         now = datetime.datetime.now()
 
         # Verificar si es las 10:00 AM
-        if now.hour == 10 and now.minute == 10:
+        if now.hour == 20 and now.minute == 10:
             # Eliminar archivos .js si superan el límite
             eliminar_archivos_js(proyecto_dir, limite_archivos_js)
 
